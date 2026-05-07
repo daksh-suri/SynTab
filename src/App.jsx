@@ -130,7 +130,7 @@ const App = () => {
   return (
     <main className="app">
       <header className="app-header">
-        <h1>Tab Manager</h1>
+        <h1>SynTab</h1>
         <button onClick={loadTabs}>Refresh</button>
       </header>
 
