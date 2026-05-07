@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Tab Manager",
+  "version": "1.0.0",
+  "description": "A simple React Chrome extension for managing tabs and saving sessions.",
+  "action": {
+    "default_title": "Tab Manager",
+    "default_popup": "index.html"
+  },
+  "permissions": ["tabs", "windows", "storage"]
+}
