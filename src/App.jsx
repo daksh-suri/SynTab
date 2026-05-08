@@ -38,8 +38,8 @@ const App = () => {
     return windows
       .map(windowItem => {
         const matchingTabs = windowItem.tabs?.filter(tab => {
-          const title = tab.title?.tolowerCase() || ""
-          const url = tab.url?.tolowerCase() || ""
+          const title = tab.title?.toLowerCase() || ""
+          const url = tab.url?.toLowerCase() || ""
           return title.includes(normalizedSearch) || url.includes(normalizedSearch);
         })
         return {
@@ -47,7 +47,7 @@ const App = () => {
           tabs: matchingTabs
         }
       })
-      .filter(windowItem => windowItem.tabs.lenght > 0)
+      .filter(windowItem => windowItem.tabs.length > 0)
   }, [windows, searchTerm]);
 
   function toggleTabSelection(tabId) {
