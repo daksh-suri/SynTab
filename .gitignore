@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 notes.txt
+AGENTS.md
+docs
 
 # Editor directories and files
 .vscode/*

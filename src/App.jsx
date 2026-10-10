@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { getAllWindowsWithTabs,closeTab,closeTabs,restoreSessionInNewWindow,switchToTab } from './utils/chromeApi';
-import { createSession } from './utils/session';
+import { createSession, resolveUniqueSessionName } from './utils/session';
 import { getSavedSessions, saveSessions } from './utils/storage.js';
 import SearchBar from './components/SearchBar';
 import TabList from './components/TabList';
@@ -64,6 +64,10 @@ const App = () => {
     });
   }
 
+  function handleClearSelection() {
+    setSelectedTabIds(new Set());
+  }
+
   async function handleSwitchTab(tab) {
     await switchToTab(tab);
   }
@@ -94,15 +98,21 @@ const App = () => {
   async function handleSaveSession(event) {
     event.preventDefault();
 
+    const saveScope = event.nativeEvent?.submitter?.dataset?.scope || "all";
+
     if (!sessionName.trim()) {
       setStatusMessage("Enter a session name first.");
       return;
     }
 
-    const newSession = createSession(sessionName, windows);
+    const newSession = createSession(
+      resolveUniqueSessionName(sessionName, sessions),
+      windows,
+      saveScope === "selected" ? selectedTabIds : null
+    );
 
     if (newSession.tabs.length === 0) {
-      setStatusMessage("No restorable tabs found.");
+      setStatusMessage(saveScope === "selected" ? "No restorable tabs selected." : "No restorable tabs found.");
       return;
     }
 
@@ -111,7 +121,7 @@ const App = () => {
     await saveSessions(updatedSessions);
     setSessions(updatedSessions);
     setSessionName("");
-    setStatusMessage(`Saved session: ${newSession.name}`);
+    setStatusMessage(`Saved session: ${newSession.name} (${newSession.tabs.length} tab(s)).`);
   }
 
   async function handleRestoreSession(session) {
@@ -136,10 +146,13 @@ const App = () => {
 
       <SearchBar value={searchTerm} onChange={setSearchTerm} />
 
-      <section className="bulk-actions">
-        <span>{selectedTabIds.size} selected</span>
-        <button onClick={handleCloseSelectedTabs}>Close Selected</button>
-      </section>
+      {selectedTabIds.size > 0 && (
+        <section className="bulk-actions">
+          <span>{selectedTabIds.size} selected</span>
+          <button onClick={handleClearSelection}>Clear</button>
+          <button onClick={handleCloseSelectedTabs}>Close Selected</button>
+        </section>
+      )}
 
       <TabList
         windows={filteredWindows}
@@ -160,6 +173,9 @@ const App = () => {
             placeholder="Session name"
           />
           <button type="submit">Save All Tabs</button>
+          {selectedTabIds.size > 0 && (
+            <button type="submit" data-scope="selected">Save Selected Tabs</button>
+          )}
         </form>
 
         <SessionList
