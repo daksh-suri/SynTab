@@ -1,4 +1,4 @@
-function createId(){
+export function createId(){
     // checking if uuid is suppported or not 
     if (crypto.randomUUID) {
         return crypto.randomUUID();
@@ -6,7 +6,7 @@ function createId(){
     return String(Date.now());
 }
 
-function isRestorableUrl(url){
+export function isRestorableUrl(url){
     return url && (url.startsWith('http://') || url.startsWith('https://'));
 }
 
@@ -19,6 +19,18 @@ export function resolveUniqueSessionName(name,sessions){
     return `${base} (${counter})`;
 }
 
+export function normalizeSession(session){
+    const tabs = Array.isArray(session.tabs) ? session.tabs : [];
+    return {
+        ...session,
+        updatedAt : session.updatedAt || session.createdAt || new Date().toISOString(),
+        tabs : tabs.map(tab=>({
+            ...tab,
+            id : tab.id || createId()
+        }))
+    }
+}
+
 export function createSession(name,windows,selectedTabIds = null){
     const allTabs = windows.flatMap(window=>window.tabs);
     const scopedTabs = selectedTabIds?.size
@@ -27,13 +39,17 @@ export function createSession(name,windows,selectedTabIds = null){
     const tabs = scopedTabs
             .filter(tab=>isRestorableUrl(tab.url))
             .map(tab=>({
+                id : createId(),
                 title : tab.title,
                 url : tab.url,
+                favIconUrl : isRestorableUrl(tab.favIconUrl) ? tab.favIconUrl : undefined
             }))
+    const now = new Date().toISOString();
     return {
         id : createId(),
         name : name.trim(),
-        createdAt : new Date().toISOString(),
+        createdAt : now,
+        updatedAt : now,
         tabs
     }
 }

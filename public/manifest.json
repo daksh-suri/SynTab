@@ -7,5 +7,5 @@
     "default_title": "SynTab",
     "default_popup": "index.html"
   },
-  "permissions": ["tabs", "windows", "storage"]
+  "permissions": ["tabs", "windows", "storage", "favicon"]
 }
