@@ -1,6 +1,6 @@
 import SessionItem from "./SessionItem";
 
-export default function SessionList({ sessions, onRestoreSession, onDeleteSession }) {
+export default function SessionList({ sessions, onRestoreSession, onDeleteSession, onEditSession }) {
   if (sessions.length === 0) {
     return <p className="empty-message">No saved sessions yet.</p>;
   }
@@ -13,6 +13,7 @@ export default function SessionList({ sessions, onRestoreSession, onDeleteSessio
           session={session}
           onRestore={onRestoreSession}
           onDelete={onDeleteSession}
+          onEdit={onEditSession}
         />
       ))}
     </ul>

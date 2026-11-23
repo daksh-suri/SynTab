@@ -1,3 +1,5 @@
+import Favicon from "./Favicon";
+
 export default function TabItem({
   tab,
   isSelected,
@@ -6,14 +8,16 @@ export default function TabItem({
   onClose
 }) {
   return (
-    <li className="tab-item">
-      <label className="tab-select">
-        <input
-          type="checkbox"
-          checked={isSelected}
-          onChange={() => onToggleSelection(tab.id)}
-        />
-      </label>
+    <li className={`tab-item${isSelected ? " is-selected" : ""}`}>
+      <input
+        className="tab-check"
+        type="checkbox"
+        checked={isSelected}
+        onChange={() => onToggleSelection(tab.id)}
+        aria-label={`Select ${tab.title || tab.url}`}
+      />
+
+      <Favicon url={tab.url} favIconUrl={tab.favIconUrl} />
 
       <button className="tab-main" onClick={() => onSwitch(tab)}>
         <span className="tab-title">{tab.title || "Untitled Tab"}</span>
